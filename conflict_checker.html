@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card">
+    <h2>Ingredient Conflict Detection</h2>
+    <form method="post" class="form-block">
+        <label>Select products to check conflicts:</label>
+        <div class="product-list">
+            {% for product in products %}
+            <label><input type="checkbox" name="product_ids" value="{{ product.id }}" {% if product in selected_products %}checked{% endif %} /> {{ product.name }} ({{ product.category }})</label>
+            {% endfor %}
+        </div>
+        <button type="submit">Check Conflicts</button>
+    </form>
+
+    {% if conflicts %}
+    <div class="alerts"><h3>Conflict Alerts</h3>{% for c in conflicts %}<div class="alert-item"><strong>{{ c.pair }}</strong><p>{{ c.warning }}</p></div>{% endfor %}</div>
+    {% elif selected_products %}
+    <p>No conflict found in selected products based on current rules.</p>
+    {% endif %}
+</section>
+{% endblock %}

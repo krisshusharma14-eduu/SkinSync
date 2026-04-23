@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="stats-grid">
+    <article class="stat-card pink">
+        <p>Routine Today</p>
+        <h3>🫧 {{ routine_done }}/{{ routine_total }}</h3>
+    </article>
+    <article class="stat-card blue">
+        <p>Current Streak</p>
+        <h3>🔥 {{ weekly.streak }} Days</h3>
+    </article>
+    <article class="stat-card green">
+        <p>Glow Score</p>
+        <h3>✨ {{ glow_score }}/100</h3>
+    </article>
+    <article class="stat-card peach">
+        <p>Next Reminder</p>
+        <h3>⏰ {{ next_reminder }}</h3>
+    </article>
+</section>
+{% if missed_routine %}
+<section class="feature-card missed-card">
+    <p>You missed your routine today. Let’s reset and start fresh tomorrow 💜</p>
+</section>
+{% endif %}
+
+<section id="routine" class="feature-card">
+    <div class="section-head">
+        <h2>Your Recommended Routine</h2>
+        <a class="pill-btn" href="{{ url_for('main.quiz') }}">View Full Routine</a>
+    </div>
+    <div class="grid-2">
+        <div>
+            <h4>Morning Routine ☀️</h4>
+            <div class="h-scroll">
+                {% for step in routine.morning %}
+                <article class="product-card">
+                    <div class="product-image">🧴</div>
+                    <p class="product-name">{{ step.split(':')[1].strip() if ':' in step else step }}</p>
+                    <span class="tag">{{ step.split(':')[0] if ':' in step else 'Step' }}</span>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h4>Night Routine 🌙</h4>
+            <div class="h-scroll">
+                {% for step in routine.night %}
+                <article class="product-card">
+                    <div class="product-image">🫙</div>
+                    <p class="product-name">{{ step.split(':')[1].strip() if ':' in step else step }}</p>
+                    <span class="tag">{{ step.split(':')[0] if ':' in step else 'Step' }}</span>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="matcher" class="feature-card">
+    <h2>Product Matcher</h2>
+    <p class="subtle matcher-subtitle">2-3 curated options per category. Tap product name to open brand page.</p>
+    <div class="matcher-list">
+        {% for item in product_matcher_items %}
+        <article class="matcher-item">
+            <div>
+                <p class="product-name"><a class="product-link" href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.brand }} - {{ item.name }}</a></p>
+                <span class="tag">{{ item.category }}</span>
+            </div>
+            <strong>{{ item.price }}</strong>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="feature-card" id="ingredient">
+    <h3>Ingredient Checker</h3>
+    <form method="post" action="{{ url_for('main.ingredient_checker') }}" class="form-block">
+        <input name="ingredients" placeholder="retinol, niacinamide, fragrance" />
+        <button type="submit">Analyze</button>
+    </form>
+    <div class="mini-stats">
+        <p>Safe ingredients count: <strong>6</strong></p>
+        <p>Harmful ingredients count: <strong>2</strong></p>
+    </div>
+</section>
+
+<section class="tracker-reminder-grid">
+    <article class="feature-card" id="tracker">
+        <h3>Routine Tracker</h3>
+        <div class="week-strip">
+            {% for day in weekly_days %}
+            <span class="day-chip {{ 'done' if day.done else '' }}">{{ day.weekday }}</span>
+            {% endfor %}
+        </div>
+        <div class="progress-wrap">
+            <div class="progress-bar" style="width: {{ tracker_completion * 100 // 7 }}%;"></div>
+        </div>
+        <form method="post" action="{{ url_for('main.track') }}">
+            <input type="hidden" name="night_done" value="{% if today_log and today_log.night_done %}on{% endif %}" />
+            <div class="tracker-action-row">
+                <label class="tracker-checkbox-label" for="morningRoutineCheckbox">
+                    <input id="morningRoutineCheckbox" type="checkbox" name="morning_done" {% if today_log and today_log.morning_done %}checked{% endif %} />
+                    <span>Morning Routine</span>
+                </label>
+                <button type="submit">Update</button>
+            </div>
+        </form>
+    </article>
+
+    <article class="feature-card" id="reminders">
+        <h3>Reminders</h3>
+        <div class="reminder-row-fixed">
+            <label for="morningReminderTime">Morning</label>
+            <input id="morningReminderTime" type="time" value="{{ morning_reminder.reminder_time if morning_reminder else '' }}" />
+            <label class="switch-inline" for="morningReminderToggle">
+                <input id="morningReminderToggle" type="checkbox" {% if morning_reminder and morning_reminder.enabled %}checked{% endif %} />
+                <span>ON</span>
+            </label>
+            <button id="saveMorningReminderBtn" type="button">Save Morning</button>
+        </div>
+        <div class="reminder-row-fixed">
+            <label for="nightReminderTime">Night</label>
+            <input id="nightReminderTime" type="time" value="{{ night_reminder.reminder_time if night_reminder else '' }}" />
+            <label class="switch-inline" for="nightReminderToggle">
+                <input id="nightReminderToggle" type="checkbox" {% if night_reminder and night_reminder.enabled %}checked{% endif %} />
+                <span>ON</span>
+            </label>
+            <button id="saveNightReminderBtn" type="button">Save Night</button>
+        </div>
+        <div class="reminder-status-row">
+            <span>Morning Status: <strong id="morningStatusText">{{ 'Active' if morning_reminder and morning_reminder.enabled else 'Disabled' }}</strong></span>
+            <span>Night Status: <strong id="nightStatusText">{{ 'Active' if night_reminder and night_reminder.enabled else 'Disabled' }}</strong></span>
+        </div>
+        <button id="enableNotificationsBtn" type="button">Enable Browser Notifications</button>
+    </article>
+</section>
+
+<section id="progress" class="feature-card">
+    <h2>Progress</h2>
+    <canvas id="weeklyChart" data-week='{{ weekly.days | tojson }}'></canvas>
+</section>
+
+<section class="feature-card">
+    <div class="section-head">
+        <h2>Popular Brands We Love 💜</h2>
+        <a class="btn-link" href="#matcher">View All Brands →</a>
+    </div>
+    <div class="brand-carousel">
+        {% for brand in ['Minimalist', 'Dot & Key', 'Plum', 'Foxtale', 'Mamaearth', 'Aqualogica', "Dr. Sheth's", 'Pilgrim'] %}
+        <div class="brand-card">{{ brand }}</div>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="history" class="feature-card">
+    <h2>History</h2>
+    {% if history_logs %}
+    <div class="matcher-list">
+        {% for log in history_logs %}
+        <article class="matcher-item">
+            <p class="product-name">{{ log.log_date }}</p>
+            <span class="tag">{{ 'Morning ✓' if log.morning_done else 'Morning ✗' }} | {{ 'Night ✓' if log.night_done else 'Night ✗' }}</span>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No tracker history yet.</p>
+    {% endif %}
+</section>
+<div id="toastContainer" class="toast-container"></div>
+{% endblock %}

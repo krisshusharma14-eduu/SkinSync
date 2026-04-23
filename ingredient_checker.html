@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card">
+    <h2>Ingredient Safety Checker</h2>
+    <form method="post" class="form-block">
+        <label>Search by product name (optional)<input name="product_name" value="{{ product_name }}" placeholder="Example: Bright Balance Serum" /></label>
+        <label>Or enter ingredients (comma-separated)<textarea name="ingredients" placeholder="retinol, niacinamide, fragrance"></textarea></label>
+        <button type="submit">Analyze Ingredients</button>
+    </form>
+
+    {% if report %}
+    <div class="grid-3">
+        <div><h3>Safe</h3><ul>{% for item in report.safe %}<li><strong>{{ item.ingredient }}</strong> - {{ item.note }}</li>{% endfor %}</ul></div>
+        <div><h3>Caution</h3><ul>{% for item in report.cautions %}<li><strong>{{ item.ingredient }}</strong> - {{ item.note }}</li>{% endfor %}</ul></div>
+        <div><h3>Harmful</h3><ul>{% for item in report.harmful %}<li><strong>{{ item.ingredient }}</strong> - {{ item.note }}</li>{% endfor %}</ul></div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

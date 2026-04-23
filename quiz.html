@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="feature-card quiz-card">
+    <h2>Skin Quiz - Find Your Glow Match ✨</h2>
+    <p class="subtle">Answer a few quick questions and we will personalize your skincare plan.</p>
+    <form method="post" class="form-block quiz-form">
+        <div class="quiz-grid">
+            <label>How oily does your skin get by midday?
+                <select name="oil_level" required><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select>
+            </label>
+            <label>How does your skin feel after cleansing?
+                <select name="feel_after_wash" required><option value="balanced">Balanced</option><option value="tight">Tight / Dry</option></select>
+            </label>
+            <label>Do products often irritate your skin?
+                <select name="irritation" required><option value="rarely">Rarely</option><option value="sometimes">Sometimes</option><option value="often">Often</option></select>
+            </label>
+            <label>Budget preference
+                <select name="budget" required><option value="low">Low</option><option value="mid">Mid</option><option value="high">High</option></select>
+            </label>
+        </div>
+
+        <fieldset class="quiz-fieldset">
+            <legend>Pick your top skin concerns</legend>
+            <div class="concern-chips">
+                <label><input type="checkbox" name="concerns" value="acne" /> Acne</label>
+                <label><input type="checkbox" name="concerns" value="dryness" /> Dryness</label>
+                <label><input type="checkbox" name="concerns" value="pigmentation" /> Pigmentation</label>
+                <label><input type="checkbox" name="concerns" value="redness" /> Redness</label>
+                <label><input type="checkbox" name="concerns" value="texture" /> Texture</label>
+            </div>
+        </fieldset>
+
+        <button type="submit">Save My Skin Profile</button>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block auth_content %}
+<section class="card auth-card">
+    <h2>Smart skincare guidance made simple</h2>
+    <p>Get a personalized, safe routine based on your skin profile.</p>
+
+    <div class="grid-2">
+        <form class="form-block" method="post" action="{{ url_for('main.signup') }}">
+            <h3>Sign Up</h3>
+            <label>Username<input name="username" required /></label>
+            <label>Password<input type="password" name="password" required /></label>
+            <button type="submit">Create Account</button>
+        </form>
+
+        <form class="form-block" method="post" action="{{ url_for('main.login') }}">
+            <h3>Login</h3>
+            <label>Username<input name="username" required /></label>
+            <label>Password<input type="password" name="password" required /></label>
+            <button type="submit">Login</button>
+            <small>Demo user: demo / demo123</small>
+        </form>
+    </div>
+</section>
+{% endblock %}

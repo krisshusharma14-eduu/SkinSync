@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="feature-card profile-page">
+    <h2>My Profile</h2>
+    <div class="profile-layout">
+        <div class="profile-avatar big">{{ user.username[0] | upper }}</div>
+        <div>
+            <p class="profile-name">{{ user.username }}</p>
+            <p class="subtle">Skin type: {{ user.skin_type or 'not set' }}</p>
+            <p class="subtle">Preferences: {{ user.concerns or 'not set' }} | Budget: {{ user.budget or 'not set' }}</p>
+            <a class="pill-btn" href="{{ url_for('main.quiz') }}">Edit Profile</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

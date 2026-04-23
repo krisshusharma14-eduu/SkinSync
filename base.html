@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkinSync</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    {% if shell_user %}
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div>
+                <div class="logo">SkinSync ✨</div>
+                <div class="profile-card">
+                    <div class="profile-avatar">{{ shell_user.username[0] | upper }}</div>
+                    <div>
+                        <p class="profile-name">{{ shell_user.username }}</p>
+                        <span class="skin-badge">{{ shell_user.skin_type or "not set" }}</span>
+                    </div>
+                </div>
+                <nav class="side-nav">
+                    <a class="{{ 'active' if active_endpoint == 'main.dashboard' else '' }}" href="{{ url_for('main.dashboard') }}">🏠 Dashboard</a>
+                    <a class="{{ 'active' if active_endpoint == 'main.quiz' else '' }}" href="{{ url_for('main.quiz') }}">🧪 Skin Quiz</a>
+                    <a href="{{ url_for('main.dashboard') }}#routine">🫧 My Routine</a>
+                    <a href="{{ url_for('main.dashboard') }}#matcher">🛍️ Product Matcher</a>
+                    <a class="{{ 'active' if active_endpoint == 'main.ingredient_checker' else '' }}" href="{{ url_for('main.ingredient_checker') }}">🔎 Ingredient Checker</a>
+                    <a href="{{ url_for('main.dashboard') }}#tracker">✅ Routine Tracker</a>
+                    <a href="{{ url_for('main.dashboard') }}#reminders">⏰ Reminders</a>
+                    <a href="{{ url_for('main.dashboard') }}#progress">📈 Progress</a>
+                    <a href="{{ url_for('main.dashboard') }}#history">🕘 History</a>
+                </nav>
+            </div>
+        </aside>
+
+        <div class="main-area">
+            <header class="top-header">
+                <div>
+                    <p class="greeting">Good Evening, {{ shell_user.username }} 🌙</p>
+                    <h1>Let’s keep your skin happy & glowing!</h1>
+                </div>
+                <details class="profile-menu">
+                    <summary>{{ shell_user.username }} ▾</summary>
+                    <div class="profile-dropdown">
+                        <a href="{{ url_for('main.profile') }}">My Profile</a>
+                        <a href="{{ url_for('main.profile') }}">Edit Profile</a>
+                        <a href="{{ url_for('main.profile') }}">Settings</a>
+                        <a href="{{ url_for('main.logout') }}">Logout</a>
+                    </div>
+                </details>
+            </header>
+
+            <main class="container">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    {% else %}
+    <main class="container auth-container">
+        {% block auth_content %}{% endblock %}
+    </main>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
